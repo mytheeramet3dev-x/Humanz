@@ -1,5 +1,5 @@
-//! HumanZ CLI: Executes a 30-Year Whole-Body Multi-Organ Negligible Senescence Simulation
-//! (Chronological Age 72.0 -> 102.0 Years) across 6 interconnected human organ systems.
+//! HumanZ CLI: Executes a 10,000-Year Whole-Body Multi-Organ Negligible Senescence Simulation
+//! (Chronological Age 72.0 -> 10,072.0 Years by default) across 6 interconnected human organ systems.
 
 use humanz::body::{HumanDigitalTwin, OrganSystem};
 use humanz::export::{
@@ -22,7 +22,7 @@ fn main() -> Result<()> {
     println!("====================================================================================================\n");
 
     let mut initial_age = 72.0f64;
-    let mut horizon_years = 30u32;
+    let mut horizon_years = 10_000u32;
     let mut export_dir: Option<PathBuf> = None;
     let mut wgs_fasta: Option<PathBuf> = None;
 
@@ -176,7 +176,7 @@ fn main() -> Result<()> {
         summary.post_reversal_snapshot.mean_telomere_bp
     );
 
-    for yr_idx in [5usize, 10, 15, 20, 25, 30] {
+    for yr_idx in [1usize, 10, 100, 1_000, 5_000, 10_000] {
         if let (Some(trt), Some(ctrl)) = (
             summary.longitudinal_treated_history.get(yr_idx),
             summary.longitudinal_control_history.get(yr_idx),
@@ -285,7 +285,7 @@ fn main() -> Result<()> {
         trt_hemo.microvascular_barotrauma_index
     );
     println!(
-        "  • Systemic Endocrine Axes (Age 102): Control [Klotho = {:.2}, Cortisol/DHEA = {:.2}, RAAS = {:.2}] -> HumanZ [Klotho = {:.2}, Cortisol/DHEA = {:.2}, RAAS = {:.2}]",
+        "  • Systemic Endocrine Axes (final age): Control [Klotho = {:.2}, Cortisol/DHEA = {:.2}, RAAS = {:.2}] -> HumanZ [Klotho = {:.2}, Cortisol/DHEA = {:.2}, RAAS = {:.2}]",
         ctrl_endo.circulating_alpha_klotho,
         ctrl_endo.adrenal_cortisol_to_dhea_ratio,
         ctrl_endo.raas_angiotensin_ii_tone,
@@ -331,7 +331,7 @@ fn main() -> Result<()> {
     );
 
     println!("\n----------------------------------------------------------------------------------------------------");
-    println!("  7 MAJOR CLOSED-LOOP SYSTEMIC PHYSIOLOGICAL CIRCUITS (Control Age 102 vs HumanZ Rejuvenated Age 26)");
+    println!("  7 MAJOR CLOSED-LOOP SYSTEMIC PHYSIOLOGICAL CIRCUITS (Control vs HumanZ at final simulated age)");
     println!("----------------------------------------------------------------------------------------------------");
     let c_circ = &summary.final_control_snapshot.circuits;
     let t_circ = &summary.final_treated_snapshot.circuits;
