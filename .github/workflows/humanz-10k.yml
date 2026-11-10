@@ -1,0 +1,48 @@
+name: HumanZ 10,000-year longevity simulation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  humanz-10k:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout HumanZ
+        uses: actions/checkout@v4
+        with:
+          path: Humanz
+      - name: Checkout SCIES dependencies
+        uses: actions/checkout@v4
+        with:
+          repository: mytheeramet3dev-x/scies-bio-th
+          path: scies-bio-th
+      - uses: actions/checkout@v4
+        with:
+          repository: mytheeramet3dev-x/scies-bio-sim
+          path: scies-bio-sim
+      - uses: actions/checkout@v4
+        with:
+          repository: mytheeramet3dev-x/scies-bio-db
+          path: scies-bio-db
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run tests
+        working-directory: Humanz
+        run: cargo test --all-targets
+      - name: Run 10,000-year simulation
+        working-directory: Humanz
+        run: cargo run --release -- --age 72 --horizon 10000 --export-dir humanz-10k-results
+      - name: Upload simulation telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: humanz-10k-telemetry
+          path: Humanz/humanz-10k-results/
+          if-no-files-found: warn
+          retention-days: 30
